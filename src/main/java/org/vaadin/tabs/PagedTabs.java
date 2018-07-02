@@ -48,14 +48,14 @@ public class PagedTabs extends Composite<VerticalLayout> implements HasSize {
     }
 
     public Tab add(Component component, String caption, boolean closable) {
-        HorizontalLayout layout = new HorizontalLayout(new Text(caption));
-        layout.setDefaultVerticalComponentAlignment(FlexComponent.Alignment.CENTER);
-        layout.setSpacing(false);
-        Tab tab = new Tab(layout);
+        HorizontalLayout tabLayout = new HorizontalLayout(new Text(caption));
+        tabLayout.setDefaultVerticalComponentAlignment(FlexComponent.Alignment.CENTER);
+        tabLayout.setSpacing(false);
+        Tab tab = new Tab(tabLayout);
 
         if (closable) {
             Span close = new Span(VaadinIcon.CLOSE_SMALL.create());
-            layout.add(close);
+            tabLayout.add(close);
             close.addClickListener(e -> remove(tab));
         }
 
@@ -66,7 +66,10 @@ public class PagedTabs extends Composite<VerticalLayout> implements HasSize {
     public void add(Component component, Tab tab) {
         tabs.add(tab);
 
-        Div wrapper = new Div(component);
+        VerticalLayout wrapper = new VerticalLayout(component);
+        wrapper.setMargin(false);
+        wrapper.setPadding(false);
+        wrapper.setSizeFull();
 
         getContent().add(wrapper);
         tabsToComponents.put(tab, wrapper);
