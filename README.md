@@ -1,14 +1,24 @@
 # paged-tabs
 
-Vaadin 10 Java integration of https://github.com/PolymerElements/paper-slider
+Current Vaadin's `Tabs` component doesn't include an API to show a `Component` when a tab is clicked. You have to code the logic to show and hide components depending on the selected tab. This component frees you from implementing such logic. Here's an example:
 
-## Development instructions
-
-Starting the test/demo server:
+```Java
+PagedTabs tabs = new PagedTabs();
+tabs.add(component, "Tab caption 1");
+tabs.add(component2, "Tab caption 2");
 ```
-mvn jetty:run
+
+You can make a tab *closable* as follows:
+```Java
+PagedTabs tabs = new PagedTabs();
+tabs.add(new Span("Close me"), "Closeable");
 ```
 
-This deploys demo at http://localhost:8080
+You can use the `Tab` class as well if, for example, you want to add components to the tab itself:
 
-
+```Java
+Tab tab = new Tab();
+tab.add(new Span("Tab caption"), new Button("Click me"));
+PagedTabs tabs = new PagedTabs();
+tabs.add(new Span("Tab content"), tab);
+```
