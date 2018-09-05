@@ -22,6 +22,8 @@ public class PagedTabs extends Composite<VerticalLayout> implements HasSize {
 
     protected final Map<Tab, Component> tabsToComponents = new HashMap<>();
 
+    protected Component selected;
+
     public PagedTabs() {
         tabs = new Tabs();
 
@@ -35,8 +37,9 @@ public class PagedTabs extends Composite<VerticalLayout> implements HasSize {
 
     public void select(Tab tab) {
         tabs.setSelectedTab(tab);
-        tabsToComponents.values().forEach(page -> page.setVisible(false));
-        tabsToComponents.get(tab).setVisible(true);
+        Component component = tabsToComponents.get(tab);
+        getContent().replace(selected, component);
+        selected = component;
     }
 
     public void select(Component component) {
@@ -71,11 +74,10 @@ public class PagedTabs extends Composite<VerticalLayout> implements HasSize {
         wrapper.setPadding(false);
         wrapper.setSizeFull();
 
-        getContent().add(wrapper);
         tabsToComponents.put(tab, wrapper);
-        wrapper.setVisible(false);
 
         if (tabsToComponents.size() == 1) {
+            selected = wrapper;
             select(tab);
         }
     }
@@ -83,7 +85,6 @@ public class PagedTabs extends Composite<VerticalLayout> implements HasSize {
     public void remove(Tab tab) {
         tabs.remove(tab);
         Component wrapper = tabsToComponents.get(tab);
-        getContent().remove(wrapper);
         tabsToComponents.remove(tab);
 
     }

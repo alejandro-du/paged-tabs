@@ -5,7 +5,7 @@
 
     <groupId>org.vaadin.tabs</groupId>
     <artifactId>paged-tabs</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
     <name>paged-tabs</name>
     <description>Integration of paper-slider for Vaadin 10</description>
 
