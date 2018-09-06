@@ -4,7 +4,6 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.component.HasSize;
 import com.vaadin.flow.component.Text;
-import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
@@ -12,6 +11,7 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
+import com.vaadin.flow.function.SerializableSupplier;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,7 +20,7 @@ public class PagedTabs extends Composite<VerticalLayout> implements HasSize {
 
     protected final Tabs tabs;
 
-    protected final Map<Tab, Component> tabsToComponents = new HashMap<>();
+    protected final Map<Tab, SerializableSupplier<Component>> tabsToSuppliers = new HashMap<>();
 
     protected Component selected;
 
@@ -36,14 +36,22 @@ public class PagedTabs extends Composite<VerticalLayout> implements HasSize {
     }
 
     public void select(Tab tab) {
-        tabs.setSelectedTab(tab);
-        Component component = tabsToComponents.get(tab);
-        getContent().replace(selected, component);
-        selected = component;
-    }
+        SerializableSupplier<Component> supplier = tabsToSuppliers.get(tab);
+        Component component = supplier.get();
 
-    public void select(Component component) {
-        select(getTab(component));
+        VerticalLayout wrapper = new VerticalLayout(component);
+        wrapper.setMargin(false);
+        wrapper.setPadding(false);
+        wrapper.setSizeFull();
+
+        if (selected == null) {
+            getContent().add(wrapper);
+        } else {
+            getContent().replace(selected, wrapper);
+        }
+
+        tabs.setSelectedTab(tab);
+        selected = wrapper;
     }
 
     public Tab add(Component component, String caption) {
@@ -51,6 +59,18 @@ public class PagedTabs extends Composite<VerticalLayout> implements HasSize {
     }
 
     public Tab add(Component component, String caption, boolean closable) {
+        return add(() -> component, caption, closable);
+    }
+
+    public void add(Component component, Tab tab) {
+        add(() -> component, tab);
+    }
+
+    public Tab add(SerializableSupplier<Component> componentSupplier, String caption) {
+        return add(componentSupplier, caption, false);
+    }
+
+    public Tab add(SerializableSupplier<Component> componentSupplier, String caption, boolean closable) {
         HorizontalLayout tabLayout = new HorizontalLayout(new Text(caption));
         tabLayout.setDefaultVerticalComponentAlignment(FlexComponent.Alignment.CENTER);
         tabLayout.setSpacing(false);
@@ -62,44 +82,24 @@ public class PagedTabs extends Composite<VerticalLayout> implements HasSize {
             close.addClickListener(e -> remove(tab));
         }
 
-        add(component, tab);
+        add(componentSupplier, tab);
         return tab;
+
     }
 
-    public void add(Component component, Tab tab) {
+    public void add(SerializableSupplier<Component> componentSupplier, Tab tab) {
         tabs.add(tab);
+        tabsToSuppliers.put(tab, componentSupplier);
 
-        VerticalLayout wrapper = new VerticalLayout(component);
-        wrapper.setMargin(false);
-        wrapper.setPadding(false);
-        wrapper.setSizeFull();
-
-        tabsToComponents.put(tab, wrapper);
-
-        if (tabsToComponents.size() == 1) {
-            selected = wrapper;
+        if (tabsToSuppliers.size() == 1) {
             select(tab);
         }
     }
 
     public void remove(Tab tab) {
         tabs.remove(tab);
-        Component wrapper = tabsToComponents.get(tab);
-        tabsToComponents.remove(tab);
-
-    }
-
-    public void remove(Component component) {
-        remove(getTab(component));
-    }
-
-    public Tab getTab(Component component) {
-        for (Tab t : tabsToComponents.keySet()) {
-            if (tabsToComponents.get(t).equals(component)) {
-                return t;
-            }
-        }
-        return null;
+        tabsToSuppliers.remove(tab);
+        select(tabs.getSelectedTab());
     }
 
 }
