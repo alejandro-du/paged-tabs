@@ -1,3 +1,6 @@
+[![Published on Vaadin  Directory](https://img.shields.io/badge/Vaadin%20Directory-published-00b4f0.svg)](https://vaadin.com/directory/component/paged-tabs)
+[![Stars on vaadin.com/directory](https://img.shields.io/vaadin-directory/star/paged-tabs.svg)](https://vaadin.com/directory/component/paged-tabs)
+
 # paged-tabs
 
 Current Vaadin's `Tabs` component doesn't include an API to show a `Component` when a tab is clicked. You have to code the logic to show and hide components depending on the selected tab. This component frees you from implementing such logic. Here's an example:
