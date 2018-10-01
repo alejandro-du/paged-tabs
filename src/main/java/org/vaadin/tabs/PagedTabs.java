@@ -88,8 +88,8 @@ public class PagedTabs extends Composite<VerticalLayout> implements HasSize {
     }
 
     public void add(SerializableSupplier<Component> componentSupplier, Tab tab) {
-        tabs.add(tab);
         tabsToSuppliers.put(tab, componentSupplier);
+        tabs.add(tab);
 
         if (tabsToSuppliers.size() == 1) {
             select(tab);
