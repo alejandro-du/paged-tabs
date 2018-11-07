@@ -5,12 +5,12 @@
 
     <groupId>org.vaadin.tabs</groupId>
     <artifactId>paged-tabs</artifactId>
-    <version>1.1.0</version>
+    <version>1.1.2</version>
     <name>paged-tabs</name>
     <description>Integration of paper-slider for Vaadin 10</description>
 
     <properties>
-        <vaadin.version>10.0.1</vaadin.version>
+        <vaadin.version>10.0.6</vaadin.version>
 
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>

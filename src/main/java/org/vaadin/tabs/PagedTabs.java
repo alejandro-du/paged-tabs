@@ -11,6 +11,7 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
+import com.vaadin.flow.function.SerializableConsumer;
 import com.vaadin.flow.function.SerializableSupplier;
 
 import java.util.HashMap;
@@ -23,6 +24,7 @@ public class PagedTabs extends Composite<VerticalLayout> implements HasSize {
     protected final Map<Tab, SerializableSupplier<Component>> tabsToSuppliers = new HashMap<>();
 
     protected Component selected;
+    private SerializableConsumer<Tab> tabCloseListener;
 
     public PagedTabs() {
         tabs = new Tabs();
@@ -37,21 +39,26 @@ public class PagedTabs extends Composite<VerticalLayout> implements HasSize {
 
     public void select(Tab tab) {
         SerializableSupplier<Component> supplier = tabsToSuppliers.get(tab);
-        Component component = supplier.get();
 
-        VerticalLayout wrapper = new VerticalLayout(component);
-        wrapper.setMargin(false);
-        wrapper.setPadding(false);
-        wrapper.setSizeFull();
+        if (supplier != null) {
+            Component component = supplier.get();
 
-        if (selected == null) {
-            getContent().add(wrapper);
+            VerticalLayout wrapper = new VerticalLayout(component);
+            wrapper.setMargin(false);
+            wrapper.setPadding(false);
+            wrapper.setSizeFull();
+
+            if (selected == null) {
+                getContent().add(wrapper);
+            } else {
+                getContent().replace(selected, wrapper);
+            }
+
+            tabs.setSelectedTab(tab);
+            selected = wrapper;
         } else {
-            getContent().replace(selected, wrapper);
+            getContent().remove(selected);
         }
-
-        tabs.setSelectedTab(tab);
-        selected = wrapper;
     }
 
     public Tab add(Component component, String caption) {
@@ -84,7 +91,6 @@ public class PagedTabs extends Composite<VerticalLayout> implements HasSize {
 
         add(componentSupplier, tab);
         return tab;
-
     }
 
     public void add(SerializableSupplier<Component> componentSupplier, Tab tab) {
@@ -100,6 +106,14 @@ public class PagedTabs extends Composite<VerticalLayout> implements HasSize {
         tabs.remove(tab);
         tabsToSuppliers.remove(tab);
         select(tabs.getSelectedTab());
+
+        if (tabCloseListener != null) {
+            tabCloseListener.accept(tab);
+        }
+    }
+
+    public void setTabCloseListener(SerializableConsumer<Tab> listener) {
+        this.tabCloseListener = listener;
     }
 
 }

@@ -2,6 +2,7 @@ package org.vaadin.tabs.paged;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Text;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.tabs.Tab;
@@ -14,7 +15,7 @@ public class DemoView extends Div {
 
     public DemoView() {
         PagedTabs tabs = new PagedTabs();
-        add(tabs);
+        add(tabs, new Button("add", e -> tabs.add(new Text("test"), "Test", true)));
 
         for (int i = 1; i <= 3; i++) {
             TextField component = new TextField("Component " + i);
