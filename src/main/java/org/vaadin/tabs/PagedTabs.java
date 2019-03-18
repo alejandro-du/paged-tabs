@@ -20,21 +20,22 @@ import java.util.Map;
 public class PagedTabs extends Composite<VerticalLayout> implements HasSize {
 
     protected final Tabs tabs;
+    protected final VerticalLayout content;
+    protected Component selected;
 
     protected final Map<Tab, SerializableSupplier<Component>> tabsToSuppliers = new HashMap<>();
-
-    protected Component selected;
-    private SerializableConsumer<Tab> tabCloseListener;
+    protected SerializableConsumer<Tab> tabCloseListener;
 
     public PagedTabs() {
         tabs = new Tabs();
+        content = new VerticalLayout();
 
         tabs.addSelectedChangeListener(event -> {
             Tab selectedTab = tabs.getSelectedTab();
             select(selectedTab);
         });
 
-        getContent().add(tabs);
+        getContent().add(tabs, content);
     }
 
     public void select(Tab tab) {
@@ -48,16 +49,13 @@ public class PagedTabs extends Composite<VerticalLayout> implements HasSize {
             wrapper.setPadding(false);
             wrapper.setSizeFull();
 
-            if (selected == null) {
-                getContent().add(wrapper);
-            } else {
-                getContent().replace(selected, wrapper);
-            }
+            content.removeAll();
+            content.add(wrapper);
 
             tabs.setSelectedTab(tab);
             selected = wrapper;
         } else {
-            getContent().remove(selected);
+            content.remove(selected);
         }
     }
 

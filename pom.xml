@@ -1,16 +1,13 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0" encoding="UTF-8"?><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.vaadin.tabs</groupId>
     <artifactId>paged-tabs</artifactId>
-    <version>1.1.2</version>
+    <version>1.2.0</version>
     <name>paged-tabs</name>
-    <description>Integration of paper-slider for Vaadin 10</description>
 
     <properties>
-        <vaadin.version>10.0.6</vaadin.version>
+        <vaadin.version>13.0.1</vaadin.version>
 
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
@@ -64,11 +61,10 @@
 
     <build>
         <plugins>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>3.0.2</version>
+                <version>3.1.0</version>
                 <configuration>
                     <archive>
                         <index>true</index>
@@ -86,14 +82,17 @@
             <plugin>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-maven-plugin</artifactId>
-                <version>9.3.7.v20160115</version>
+                <version>9.4.11.v20180605</version>
                 <configuration>
                     <scanIntervalSeconds>-1</scanIntervalSeconds>
-                    <!-- Use test scope because the UI/demo classes are in 
+                    <!-- Use test scope because the UI/demo classes are in
                         the test package. -->
                     <useTestScope>true</useTestScope>
+                    <supportedPackagings>
+                        <supportedPackaging>jar</supportedPackaging>
+                    </supportedPackagings>
                     <webAppConfig>
-                        <!-- This is only needed to be able to unzip webjars 
+                        <!-- This is only needed to be able to unzip webjars
                             directly into src/test/webjar-debug and modify them for testing -->
                         <resourceBase>src/test/webjar-debug/META-INF/resources</resourceBase>
                     </webAppConfig>
@@ -110,7 +109,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-assembly-plugin</artifactId>
-                        <version>2.6</version>
+                        <version>3.1.0</version>
                         <configuration>
                             <appendAssemblyId>false</appendAssemblyId>
                             <descriptors>
@@ -143,7 +142,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
-                        <version>2.10.4</version>
+                        <version>3.0.1</version>
                         <executions>
                             <execution>
                                 <id>attach-javadocs</id>
