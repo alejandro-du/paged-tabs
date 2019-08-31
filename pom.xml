@@ -4,7 +4,7 @@
 
     <groupId>org.vaadin.tabs</groupId>
     <artifactId>paged-tabs</artifactId>
-    <version>2.0.1-SNAPSHOT</version>
+    <version>2.0.1</version>
     <name>paged-tabs</name>
 
     <properties>
@@ -22,7 +22,7 @@
         <url>https://github.com/alejandro-du/paged-tabs.git</url>
         <connection>scm:git:https://github.com/alejandro-du/paged-tabs.git</connection>
         <developerConnection>scm:git:https://github.com/alejandro-du/paged-tabs.git</developerConnection>
-        <tag>HEAD</tag>
+        <tag>paged-tabs-2.0.1</tag>
     </scm>
     <issueManagement>
         <system>GitHub</system>
