@@ -3,6 +3,8 @@ package org.vaadin.tabs;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.component.HasSize;
+import com.vaadin.flow.component.HasStyle;
+import com.vaadin.flow.component.HasTheme;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.VaadinIcon;
@@ -17,7 +19,7 @@ import com.vaadin.flow.function.SerializableSupplier;
 import java.util.HashMap;
 import java.util.Map;
 
-public class PagedTabs extends Composite<VerticalLayout> implements HasSize {
+public class PagedTabs extends Composite<VerticalLayout> implements HasSize, HasStyle, HasTheme {
 
     protected final Tabs tabs;
     protected final VerticalLayout content;
