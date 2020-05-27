@@ -3,25 +3,81 @@
 
 # paged-tabs
 
-Current Vaadin's `Tabs` component doesn't include an API to show a `Component` when a tab is clicked. You have to code the logic to show and hide components depending on the selected tab. This component frees you from implementing such logic. Here's an example:
+The current Vaadin's `Tabs` component doesn't include an API to show a `Component` when a tab is clicked.
+You have to code the logic to show and hide components depending on the selected tab.
+This component frees you from implementing such logic. Here's an example:
 
 ```Java
-PagedTabs tabs = new PagedTabs();
-tabs.add(component, "Tab caption 1");
-tabs.add(component2, "Tab caption 2");
+VerticalLayout container = new VerticalLayout();
+PagedTabs tabs = new PagedTabs(container);
+tabs.add("Tab caption 1", component1);
+tabs.add("Tab caption 2", component2);
 ```
 
-You can make a tab *closable* as follows:
+Make a tab non-closable as follows:
 ```Java
-PagedTabs tabs = new PagedTabs();
-tabs.add(new Span("Close me"), "Closeable");
+tabs.add("Closable", new Span("Close me"), false);
 ```
 
-You can use the `Tab` class as well if, for example, you want to add components to the tab itself:
+Get a `Tab` reference:
 
 ```Java
-Tab tab = new Tab();
-tab.add(new Span("Tab caption"), new Button("Click me"));
-PagedTabs tabs = new PagedTabs();
-tabs.add(new Span("Tab content"), tab);
+Tab tab = tabs.add("Tab caption", component);
+```
+
+Add a selection listener:
+
+```Java
+tabs.addSelectedChangeListener(selectedTab -> {
+    ...
+});
+```
+
+Set a close listener:
+
+```java
+tabs.setCloseListener(closableTab, closedTab -> {
+    ...
+});
+```
+
+Get text by `Tab` (captions must be unique):
+
+```java
+String textOnTab = tabs.getText(tab);
+```
+
+Get `Tab` by text:
+
+```java
+Tab tab = tabs.getTab("Tab caption");
+```
+
+Get `Component` by tab:
+
+```java
+Component component = tabs.getComponent(tab);
+```
+
+Close a tab:
+```java
+tabs.close(tab);
+```
+
+Select a tab:
+
+```java
+tabs.select(tab);
+```
+
+Get selected tab:
+
+```java
+Tab tab = tabs.getSelectedTab();
+```
+
+Count tabs:
+
+```java
+int count = tabs.count();
 ```

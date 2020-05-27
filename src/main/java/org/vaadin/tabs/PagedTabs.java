@@ -2,116 +2,113 @@ package org.vaadin.tabs;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Composite;
-import com.vaadin.flow.component.HasSize;
-import com.vaadin.flow.component.Text;
-import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.HasComponents;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.orderedlayout.FlexComponent;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
-import com.vaadin.flow.function.SerializableConsumer;
-import com.vaadin.flow.function.SerializableSupplier;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Consumer;
 
-public class PagedTabs extends Composite<VerticalLayout> implements HasSize {
+public class PagedTabs extends Composite<Tabs> {
 
-    protected final Tabs tabs;
-    protected final VerticalLayout content;
-    protected Component selected;
+    protected final HasComponents componentContainer;
+    protected Map<Tab, Component> tabToComponent = new HashMap<>();
+    protected Map<String, Tab> textToTab = new HashMap<>();
+    protected Map<Tab, Consumer<Tab>> closeListeners = new HashMap<>();
 
-    protected final Map<Tab, SerializableSupplier<Component>> tabsToSuppliers = new HashMap<>();
-    protected SerializableConsumer<Tab> tabCloseListener;
+    public PagedTabs(HasComponents componentContainer) {
+        this.componentContainer = componentContainer;
 
-    public PagedTabs() {
-        tabs = new Tabs();
-        content = new VerticalLayout();
-
-        tabs.addSelectedChangeListener(event -> {
-            Tab selectedTab = tabs.getSelectedTab();
-            select(selectedTab);
+        getContent().addSelectedChangeListener(event -> {
+            if (event.getSelectedTab() != null) {
+                tabToComponent.values().forEach(component ->
+                        component.setVisible(false));
+                tabToComponent.get(event.getSelectedTab()).setVisible(true);
+            }
         });
-
-        getContent().add(tabs, content);
     }
 
-    public void select(Tab tab) {
-        SerializableSupplier<Component> supplier = tabsToSuppliers.get(tab);
-
-        if (supplier != null) {
-            Component component = supplier.get();
-
-            VerticalLayout wrapper = new VerticalLayout(component);
-            wrapper.setMargin(false);
-            wrapper.setPadding(false);
-            wrapper.setSizeFull();
-
-            content.removeAll();
-            content.add(wrapper);
-
-            tabs.setSelectedTab(tab);
-            selected = wrapper;
-        } else {
-            content.remove(selected);
-        }
+    public Tab add(String tabText, Component component) {
+        return this.add(tabText, component, true);
     }
 
-    public Tab add(Component component, String caption) {
-        return add(component, caption, false);
-    }
+    public Tab add(String tabText, Component component, boolean closable) {
+        component.setVisible(false);
+        componentContainer.add(component);
 
-    public Tab add(Component component, String caption, boolean closable) {
-        return add(() -> component, caption, closable);
-    }
-
-    public void add(Component component, Tab tab) {
-        add(() -> component, tab);
-    }
-
-    public Tab add(SerializableSupplier<Component> componentSupplier, String caption) {
-        return add(componentSupplier, caption, false);
-    }
-
-    public Tab add(SerializableSupplier<Component> componentSupplier, String caption, boolean closable) {
-        HorizontalLayout tabLayout = new HorizontalLayout(new Text(caption));
-        tabLayout.setDefaultVerticalComponentAlignment(FlexComponent.Alignment.CENTER);
-        tabLayout.setSpacing(false);
-        Tab tab = new Tab(tabLayout);
+        Tab tab = new Tab(tabText);
 
         if (closable) {
-            Span close = new Span(VaadinIcon.CLOSE_SMALL.create());
-            tabLayout.add(close);
-            close.addClickListener(e -> remove(tab));
+            Button closeButton = new Button(VaadinIcon.CLOSE_SMALL.create(), event -> close(tab));
+            closeButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE);
+            tab.add(closeButton);
         }
 
-        add(componentSupplier, tab);
+        tabToComponent.put(tab, component);
+        textToTab.put(tabText, tab);
+
+        getContent().add(tab);
         return tab;
     }
 
-    public void add(SerializableSupplier<Component> componentSupplier, Tab tab) {
-        tabsToSuppliers.put(tab, componentSupplier);
-        tabs.add(tab);
-
-        if (tabsToSuppliers.size() == 1) {
-            select(tab);
-        }
+    public void addSelectedChangeListener(Consumer<Tab> listener) {
+        getContent().addSelectedChangeListener(event -> listener.accept(event.getSelectedTab()));
     }
 
-    public void remove(Tab tab) {
-        tabs.remove(tab);
-        tabsToSuppliers.remove(tab);
-        select(tabs.getSelectedTab());
-
-        if (tabCloseListener != null) {
-            tabCloseListener.accept(tab);
-        }
+    public void setCloseListener(Tab tab, Consumer<Tab> listener) {
+        closeListeners.put(tab, listener);
     }
 
-    public void setTabCloseListener(SerializableConsumer<Tab> listener) {
-        this.tabCloseListener = listener;
+    public void close(Tab tab) {
+        getContent().remove(tab);
+        componentContainer.remove(tabToComponent.get(tab));
+
+        tabToComponent.remove(tab);
+        textToTab.remove(getText(tab));
+
+        Consumer<Tab> closeListener = closeListeners.get(tab);
+        if (closeListener != null) {
+            closeListener.accept(tab);
+        }
+        closeListeners.remove(tab);
+    }
+
+    public void select(Tab tab) {
+        tab.setVisible(true);
+        getContent().setSelectedTab(tab);
+    }
+
+    public Tab get(String text) {
+        return textToTab.get(text);
+    }
+
+    public Component getComponent(Tab tab) {
+        return tabToComponent.get(tab);
+    }
+
+    public String getText(Tab tab) {
+        String tabText = null;
+
+        for (Map.Entry<String, Tab> entry : textToTab.entrySet()) {
+            if (entry.getValue().equals(tab)) {
+                tabText = entry.getKey();
+                break;
+            }
+        }
+
+        return tabText;
+    }
+
+    public Tab getSelectedTab() {
+        return getContent().getSelectedTab();
+    }
+
+    public int count() {
+        return tabToComponent.size();
     }
 
 }
