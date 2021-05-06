@@ -17,15 +17,17 @@ public class DemoView extends VerticalLayout {
     public DemoView() {
         VerticalLayout container = new VerticalLayout();
         PagedTabs tabs = new PagedTabs(container);
+        tabs.getContent().setWidthFull();
 
         add(new Button("Add", event -> {
-            tabs.add("Test " + testCount, new Span("Test " + testCount), true);
+            Tab tab = tabs.add("Test " + testCount, new Span("Test " + testCount), true);
+            tab.getElement().getStyle().set("background-color", "lightblue");
             testCount++;
         }));
 
         for (int i = 1; i <= 3; i++) {
             TextField component = new TextField("Component " + i);
-            Tab tab = tabs.add("Tab " + i, component, false);
+            Tab tab = tabs.add("Tab " + i, component);
             tabs.select(tab);
         }
 
