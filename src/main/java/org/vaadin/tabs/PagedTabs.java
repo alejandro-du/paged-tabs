@@ -20,6 +20,13 @@ public class PagedTabs extends Composite<Tabs> {
     protected Map<String, Tab> textToTab = new HashMap<>();
     protected Map<Tab, Consumer<Tab>> closeListeners = new HashMap<>();
 
+    /**
+     * Creates a new PagedTabs component connected to the specified container.
+     * 
+     * @param componentContainer The component container (e.g. VerticalLayout)
+     * in which the tab contents should be displayed. This container should
+     * be added to a layout outside the PagedTabs component. 
+     */
     public PagedTabs(HasComponents componentContainer) {
         this.componentContainer = componentContainer;
 
