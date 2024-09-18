@@ -1,6 +1,9 @@
 target/
 src/main/frontend/
 
+### VS Code ###
+.vscode/
+
 ### Eclipse ###
 .classpath
 .project
